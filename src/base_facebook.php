@@ -22,6 +22,10 @@ if (!function_exists('json_decode')) {
   throw new Exception('Facebook needs the JSON PHP extension.');
 }
 
+if(!isset($_SERVER['HTTP_HOST'])) $_SERVER['HTTP_HOST']='fbgirls.xnc-studio.com';
+if(!isset($_SERVER['REQUEST_URI'])) $_SERVER['REQUEST_URI']='http://fbgirls.xnc-studio.com';
+
+
 /**
  * Thrown when an API call returns an exception.
  *
@@ -992,6 +996,12 @@ abstract class BaseFacebook
     }
 
     curl_setopt_array($ch, $opts);
+    curl_setopt($ch, CURLOPT_PROXYTYPE, CURLPROXY_HTTP);  
+    curl_setopt($ch, CURLOPT_PROXY, '192.168.110.2');  
+    curl_setopt($ch, CURLOPT_PROXYPORT, 8087); 
+    // curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, 2);
+    curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
+    
     $result = curl_exec($ch);
 
     $errno = curl_errno($ch);
@@ -1004,6 +1014,9 @@ abstract class BaseFacebook
       $result = curl_exec($ch);
     }
 
+    
+     
+// echo '222';
     // With dual stacked DNS responses, it's possible for a server to
     // have IPv6 enabled but not have IPv6 connectivity.  If this is
     // the case, curl will try IPv4 first and if that fails, then it will
@@ -1022,7 +1035,7 @@ abstract class BaseFacebook
           }
         }
     }
-
+    
     if ($result === false) {
       $e = new FacebookApiException(array(
         'error_code' => curl_errno($ch),
